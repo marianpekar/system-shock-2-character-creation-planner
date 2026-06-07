@@ -26,13 +26,12 @@ function hoverBranch(id) {
 
 function selectAssignment(yearIdx, assignId) {
   selectedYear[yearIdx] = assignId;
-  for (let i = yearIdx + 1; i < 3; i++) selectedYear[i] = null;
 
   if (yearIdx < 2) {
     document.getElementById(`year${yearIdx + 2}Section`).classList.add('unlocked');
   }
 
-  renderAllYears();
+  renderYear(yearIdx);
 
   const assign = getAssign(yearIdx, assignId);
   if (assign) showAssignmentDesc(assign);
