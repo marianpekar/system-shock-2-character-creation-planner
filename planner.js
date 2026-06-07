@@ -164,10 +164,11 @@ function showAssignmentDesc(a) {
 }
 
 function calcStats() {
-  const totals = {};
-  const allPsi = [];
+  const totals     = {};
+  const allPsi     = [];
+  const allEquip   = [];
 
-  if (!selectedBranch) return { totals, allPsi };
+  if (!selectedBranch) return { totals, allPsi, allEquip };
 
   const b = BRANCHES[selectedBranch];
   Object.entries(b.baseStats).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; });
@@ -179,13 +180,14 @@ function calcStats() {
     if (!a) continue;
     Object.entries(a.stats).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; });
     allPsi.push(...a.psi);
+    allEquip.push(...a.equipment);
   }
 
-  return { totals, allPsi };
+  return { totals, allPsi, allEquip };
 }
 
 function updateStats() {
-  const { totals, allPsi } = calcStats();
+  const { totals, allPsi, allEquip } = calcStats();
   const maxVal = Math.max(3, ...Object.values(totals));
 
   let lastGroup = '';
@@ -213,6 +215,15 @@ function updateStats() {
     psiList.innerHTML = allPsi.map(p => `<div class="psi-skill-item">${p}</div>`).join('');
   } else {
     psiSec.style.display = 'none';
+  }
+
+  const equipSec  = document.getElementById('equipSection');
+  const equipList = document.getElementById('equipList');
+  if (allEquip.length > 0) {
+    equipSec.style.display = 'block';
+    equipList.innerHTML = allEquip.map(e => `<div class="equip-item">${e}</div>`).join('');
+  } else {
+    equipSec.style.display = 'none';
   }
 
   const numericTotal = Object.values(totals).reduce((s, v) => s + v, 0);

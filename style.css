@@ -425,9 +425,9 @@ header span {
   padding-top: 10px;
 }
 .psi-section-label {
-  font-size: 0.55rem;
+  font-size: 0.8rem;
   letter-spacing: 3px;
-  color: var(--psi-label);
+  color: var(--accent-subtle);
   text-transform: uppercase;
   margin-bottom: 7px;
 }
@@ -437,6 +437,27 @@ header span {
   padding: 3px 7px;
   border: 1px solid var(--psi-border);
   background: var(--psi-bg);
+  margin-bottom: 3px;
+}
+
+.equip-section {
+  margin-top: 12px;
+  border-top: 1px solid var(--border-dim);
+  padding-top: 10px;
+}
+.equip-section-label {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: var(--accent-subtle);
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.equip-item {
+  font-size: 0.7rem;
+  color: var(--equip-text);
+  padding: 3px 7px;
+  border: 1px solid var(--equip-border);
+  background: var(--equip-bg);
   margin-bottom: 3px;
 }
 
