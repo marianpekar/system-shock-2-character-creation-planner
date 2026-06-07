@@ -7,6 +7,11 @@ function selectBranch(id) {
 
   document.body.dataset.theme = id;
 
+  const h1 = document.querySelector('header h1');
+  h1.classList.remove('flicker');
+  void h1.offsetWidth;
+  h1.classList.add('flicker');
+
   document.querySelectorAll('.branch-card').forEach(el => {
     el.classList.toggle('selected', el.dataset.branch === id);
   });
