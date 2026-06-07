@@ -14,13 +14,15 @@ const STAT_DEFS = [
   { key: 'Psionic Ability',    label: 'Psi Ability', group: 'Augmented' },
 ];
 
+const BRANCH_RESULT = 'Select a year assignment to see posting details.'
+
 const BRANCHES = {
   marines: {
     name: 'Marines', css: 'marines',
     baseStats: { 'Standard Weapons': 1 },
     basePsi: [],
     description: 'The first and most basic choice. Marines are front-line combatants — aggressive, well-armed, and trained for direct engagement. Your standard weapons training begins immediately upon enlistment.',
-    result: 'Select a year assignment above to see posting details.',
+    result: BRANCH_RESULT,
     years: [
       [
         {
@@ -93,7 +95,7 @@ const BRANCHES = {
     baseStats: { 'Standard Weapons': 1 },
     basePsi: [],
     description: 'Naval service emphasizes high-tech aptitude and systems knowledge. Navy recruits are versatile — comfortable with weapons but equally at home interfacing with complex shipboard machinery and data systems.',
-    result: 'Select a year assignment above to see posting details.',
+    result: BRANCH_RESULT,
     years: [
       [
         {
@@ -164,7 +166,7 @@ const BRANCHES = {
     baseStats: {},
     basePsi: ['Tier 1 Psi Disciplines', 'Psi Amp'],
     description: 'The OSA trains soldiers of the mind. Rather than raw combat stats, OSA recruits develop powerful psionic abilities. All OSA agents begin play with a Psi Amp and access to Tier 1 disciplines.',
-    result: 'Select a year assignment above to see posting details.',
+    result: BRANCH_RESULT,
     years: [
       [
         {
