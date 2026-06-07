@@ -1,5 +1,7 @@
-let selectedBranch = null;
-let selectedYear   = [null, null, null];
+let selectedBranch  = null;
+let selectedYear    = [null, null, null];
+let compareBuilds   = [];
+let compareIdCounter = 0;
 
 function selectBranch(id) {
   selectedBranch = id;
@@ -163,27 +165,25 @@ function showAssignmentDesc(a) {
   }
 }
 
-function calcStats() {
-  const totals     = {};
-  const allPsi     = [];
-  const allEquip   = [];
-
-  if (!selectedBranch) return { totals, allPsi, allEquip };
-
-  const b = BRANCHES[selectedBranch];
+function calcBuildStats(branch, years) {
+  const totals = {}, allPsi = [], allEquip = [];
+  if (!branch || !BRANCHES[branch]) return { totals, allPsi, allEquip };
+  const b = BRANCHES[branch];
   Object.entries(b.baseStats).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; });
   allPsi.push(...b.basePsi);
-
   for (let i = 0; i < 3; i++) {
-    if (!selectedYear[i]) continue;
-    const a = getAssign(i, selectedYear[i]);
+    if (!years[i]) continue;
+    const a = b.years[i].find(x => x.id === years[i]);
     if (!a) continue;
     Object.entries(a.stats).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; });
     allPsi.push(...a.psi);
     allEquip.push(...a.equipment);
   }
-
   return { totals, allPsi, allEquip };
+}
+
+function calcStats() {
+  return calcBuildStats(selectedBranch, selectedYear);
 }
 
 function updateStats() {
@@ -228,6 +228,78 @@ function updateStats() {
 
   const numericTotal = Object.values(totals).reduce((s, v) => s + v, 0);
   document.getElementById('totalPoints').textContent = numericTotal;
+
+  renderComparisons(totals);
+}
+
+function renderComparisons(currentTotals) {
+  const sec = document.getElementById('compareSection');
+  if (compareBuilds.length === 0) { sec.innerHTML = ''; sec.style.display = 'none'; return; }
+  sec.style.display = 'flex';
+
+  const ct = currentTotals || calcStats().totals;
+
+  sec.innerHTML = compareBuilds.map(cb => {
+    const { totals, allPsi, allEquip } = calcBuildStats(cb.branch, cb.years);
+    const branchName = BRANCHES[cb.branch].name;
+    const maxVal = Math.max(3, ...Object.values(totals));
+
+    const yearLabels = cb.years.map((y, i) => {
+      if (!y) return null;
+      const a = BRANCHES[cb.branch].years[i].find(x => x.id === y);
+      return a ? a.name : null;
+    }).filter(Boolean).join(' / ');
+
+    let lastGroup = '';
+    const statsHtml = STAT_DEFS.map(def => {
+      const val = totals[def.key] || 0;
+      const cur = ct[def.key] || 0;
+      let groupHtml = '';
+      if (def.group !== lastGroup) {
+        groupHtml = `<div class="stat-group-label">${def.group}</div>`;
+        lastGroup = def.group;
+      }
+      const pct = (val / maxVal) * 100;
+      const diff = val - cur;
+      const diffStr = diff > 0
+        ? `<span class="stat-diff pos">+${diff}</span>`
+        : diff < 0
+          ? `<span class="stat-diff neg">${diff}</span>`
+          : '';
+      return `${groupHtml}<div class="stat-row">
+        <div class="sn">${def.label}</div>
+        <div class="sb"><div class="sb-fill" style="width:${pct}%"></div></div>
+        <div class="sv${val === 0 ? ' z' : ''}">${val || '—'}${diffStr}</div>
+      </div>`;
+    }).filter(Boolean).join('');
+
+    const psiHtml = allPsi.length > 0
+      ? `<div class="psi-skills-section">
+           <div class="psi-section-label">Psi Disciplines</div>
+           ${allPsi.map(p => `<div class="psi-skill-item">${p}</div>`).join('')}
+         </div>`
+      : '';
+
+    const equipHtml = allEquip.length > 0
+      ? `<div class="equip-section">
+           <div class="equip-section-label">Starting Equipment</div>
+           ${allEquip.map(e => `<div class="equip-item">${e}</div>`).join('')}
+         </div>`
+      : '';
+
+    return `<div class="compare-card" data-branch="${cb.branch}">
+      <div class="compare-card-header">
+        <div class="compare-card-title">${branchName} — ${yearLabels || 'No assignments'}</div>
+        <button class="compare-remove-btn" onclick="removeCompareBuild(${cb.id})">×</button>
+      </div>
+      ${statsHtml}${psiHtml}${equipHtml}
+    </div>`;
+  }).join('');
+}
+
+function removeCompareBuild(id) {
+  compareBuilds = compareBuilds.filter(cb => cb.id !== id);
+  renderComparisons();
 }
 
 function handleImport(event) {
@@ -270,6 +342,28 @@ function exportBuild() {
   a.download = `ss2-${selectedBranch}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+function handleCompare(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.branch || !BRANCHES[data.branch]) return;
+      if (!Array.isArray(data.years)) return;
+      compareBuilds.push({
+        id:     compareIdCounter++,
+        branch: data.branch,
+        years:  data.years.slice()
+      });
+      renderComparisons();
+    } catch (_) {}
+  };
+  reader.readAsText(file);
 }
 
 document.addEventListener('DOMContentLoaded', function () {

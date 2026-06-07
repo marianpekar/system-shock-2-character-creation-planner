@@ -461,6 +461,66 @@ header span {
   margin-bottom: 3px;
 }
 
+.compare-card[data-branch="marines"] { --cmp-accent: #00e87a; --cmp-border: #1a3a22; --cmp-bg: #020c05; --cmp-text: #86dd9d; --cmp-track: #061208; }
+.compare-card[data-branch="navy"]    { --cmp-accent: #00aaff; --cmp-border: #0e2848; --cmp-bg: #020810; --cmp-text: #80c8e8; --cmp-track: #040c18; }
+.compare-card[data-branch="osa"]     { --cmp-accent: #bb66ff; --cmp-border: #2a1050; --cmp-bg: #070010; --cmp-text: #cc99ff; --cmp-track: #0c0218; }
+
+#compareSection {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.compare-card {
+  flex: 0 0 calc(33.333% - 8px);
+  border: 1px solid var(--cmp-border);
+  background: var(--cmp-bg);
+  padding: 12px 14px;
+  box-sizing: border-box;
+}
+.compare-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--cmp-border);
+}
+.compare-card-title {
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cmp-accent);
+}
+.compare-remove-btn {
+  background: none;
+  border: 1px solid var(--cmp-border);
+  color: var(--cmp-text);
+  font-family: inherit;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 1px 6px;
+  opacity: 0.55;
+}
+.compare-remove-btn:hover { opacity: 1; border-color: var(--cmp-accent); }
+
+.compare-card .stat-group-label  { color: var(--cmp-text); opacity: 0.7; }
+.compare-card .sn                { color: var(--cmp-text); }
+.compare-card .sb                { background: var(--cmp-track); border-color: var(--cmp-border); }
+.compare-card .sb-fill           { background: var(--cmp-accent); }
+.compare-card .sv                { color: var(--cmp-accent); width: auto; min-width: 18px; }
+.compare-card .sv.z              { color: var(--cmp-border); }
+.compare-card .psi-skills-section,
+.compare-card .equip-section     { border-top-color: var(--cmp-border); }
+.compare-card .psi-section-label,
+.compare-card .equip-section-label { color: var(--cmp-text); }
+.compare-card .psi-skill-item    { color: var(--cmp-accent); background: var(--cmp-bg); border-color: var(--cmp-border); }
+.compare-card .equip-item        { color: var(--cmp-accent); background: var(--cmp-bg); border-color: var(--cmp-border); }
+
+.stat-diff          { font-size: 0.56rem; margin-left: 5px; }
+.stat-diff.pos      { color: #44dd66; }
+.stat-diff.neg      { color: #dd4433; }
+
 .stat-total-box { margin-top: auto; padding-top: 14px; }
 .stat-total-inner {
   padding: 10px;
@@ -528,6 +588,7 @@ header span {
   .stat-total-box { margin-top: 16px; }
 
   .assignment-row { flex-direction: column; }
+  .compare-card   { flex: 0 0 100%; }
 }
 
 @media (max-width: 520px) {
