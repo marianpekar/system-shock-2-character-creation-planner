@@ -237,7 +237,7 @@ function renderComparisons(currentTotals) {
   if (compareBuilds.length === 0) { sec.innerHTML = ''; sec.style.display = 'none'; return; }
   sec.style.display = 'flex';
 
-  const ct = currentTotals || calcStats().totals;
+  const { totals: ct, allPsi: currentPsi, allEquip: currentEquip } = calcStats();
 
   sec.innerHTML = compareBuilds.map(cb => {
     const { totals, allPsi, allEquip } = calcBuildStats(cb.branch, cb.years);
@@ -276,14 +276,14 @@ function renderComparisons(currentTotals) {
     const psiHtml = allPsi.length > 0
       ? `<div class="psi-skills-section">
            <div class="psi-section-label">Psi Disciplines</div>
-           ${allPsi.map(p => `<div class="psi-skill-item">${p}</div>`).join('')}
+           ${allPsi.map(p => `<div class="psi-skill-item${currentPsi.includes(p) ? ' shared' : ''}">${p}</div>`).join('')}
          </div>`
       : '';
 
     const equipHtml = allEquip.length > 0
       ? `<div class="equip-section">
            <div class="equip-section-label">Starting Equipment</div>
-           ${allEquip.map(e => `<div class="equip-item">${e}</div>`).join('')}
+           ${allEquip.map(e => `<div class="equip-item${currentEquip.includes(e) ? ' shared' : ''}">${e}</div>`).join('')}
          </div>`
       : '';
 

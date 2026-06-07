@@ -516,6 +516,8 @@ header span {
 .compare-card .equip-section-label { color: var(--cmp-text); }
 .compare-card .psi-skill-item    { color: var(--cmp-accent); background: var(--cmp-bg); border-color: var(--cmp-border); }
 .compare-card .equip-item        { color: var(--cmp-accent); background: var(--cmp-bg); border-color: var(--cmp-border); }
+.compare-card .psi-skill-item.shared,
+.compare-card .equip-item.shared { color: var(--cmp-bg); background: var(--cmp-accent); border-color: var(--cmp-accent); }
 
 .stat-diff          { font-size: 0.56rem; margin-left: 5px; }
 .stat-diff.pos      { color: #44dd66; }
