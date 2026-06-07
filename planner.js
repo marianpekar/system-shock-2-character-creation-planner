@@ -25,10 +25,6 @@ function selectBranch(id) {
   updateStats();
 }
 
-function hoverBranch(id) {
-  if (selectedBranch !== id) showBranchDesc(id);
-}
-
 function selectAssignment(yearIdx, assignId) {
   selectedYear[yearIdx] = assignId;
 
@@ -50,7 +46,7 @@ function hoverAssign(yearIdx, assignId) {
 
 function unhover() {
   const last = lastSelectedAssign();
-  if (last)               showAssignmentDesc(last);
+  if (last) showAssignmentDesc(last);
   else if (selectedBranch) showBranchDesc(selectedBranch);
 }
 
@@ -133,13 +129,12 @@ function showBranchDesc(id) {
 
 function showAssignmentDesc(a) {
   if (!selectedBranch) return;
-  const b = BRANCHES[selectedBranch];
 
   const c = document.getElementById('descContent');
   c.style.display = 'flex';
 
   const tag = document.getElementById('descTag');
-  tag.textContent = b.name.toUpperCase();
+  tag.textContent = a.name.toUpperCase();
 
   document.getElementById('descBriefing').textContent = a.description;
   document.getElementById('descResult').textContent   = a.result;
