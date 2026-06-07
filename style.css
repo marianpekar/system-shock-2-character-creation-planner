@@ -265,7 +265,6 @@ header span {
   flex: 1;
   padding: 13px 11px;
   background: var(--card);
-  border: 1px solid var(--border-dim);
   cursor: pointer;
   position: relative;
 }
