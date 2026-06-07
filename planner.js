@@ -1,0 +1,222 @@
+let selectedBranch = null;
+let selectedYear   = [null, null, null];
+
+function selectBranch(id) {
+  selectedBranch = id;
+  selectedYear   = [null, null, null];
+
+  document.body.dataset.theme = id;
+
+  document.querySelectorAll('.branch-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.branch === id);
+  });
+
+  document.getElementById('year1Section').classList.add('unlocked');
+  document.getElementById('year2Section').classList.remove('unlocked');
+  document.getElementById('year3Section').classList.remove('unlocked');
+
+  renderAllYears();
+  showBranchDesc(id);
+  updateStats();
+}
+
+function hoverBranch(id) {
+  if (selectedBranch !== id) showBranchDesc(id);
+}
+
+function selectAssignment(yearIdx, assignId) {
+  selectedYear[yearIdx] = assignId;
+  for (let i = yearIdx + 1; i < 3; i++) selectedYear[i] = null;
+
+  if (yearIdx < 2) {
+    document.getElementById(`year${yearIdx + 2}Section`).classList.add('unlocked');
+  }
+
+  renderAllYears();
+
+  const assign = getAssign(yearIdx, assignId);
+  if (assign) showAssignmentDesc(assign);
+  updateStats();
+}
+
+function hoverAssign(yearIdx, assignId) {
+  const assign = getAssign(yearIdx, assignId);
+  if (assign && selectedYear[yearIdx] !== assignId) showAssignmentDesc(assign);
+}
+
+function unhover() {
+  const last = lastSelectedAssign();
+  if (last)               showAssignmentDesc(last);
+  else if (selectedBranch) showBranchDesc(selectedBranch);
+}
+
+function getAssign(yearIdx, assignId) {
+  if (!selectedBranch) return null;
+  return BRANCHES[selectedBranch].years[yearIdx].find(a => a.id === assignId) || null;
+}
+
+function lastSelectedAssign() {
+  if (!selectedBranch) return null;
+  for (let i = 2; i >= 0; i--) {
+    if (selectedYear[i]) {
+      const a = getAssign(i, selectedYear[i]);
+      if (a) return a;
+    }
+  }
+  return null;
+}
+
+function renderAllYears() {
+  for (let i = 0; i < 3; i++) renderYear(i);
+}
+
+function renderYear(yearIdx) {
+  const row = document.getElementById(`year${yearIdx + 1}Row`);
+  if (!selectedBranch) { row.innerHTML = ''; return; }
+
+  const assignments = BRANCHES[selectedBranch].years[yearIdx];
+
+  row.innerHTML = assignments.map(a => {
+    const sel = selectedYear[yearIdx] === a.id;
+
+    const statTags = Object.entries(a.stats)
+      .map(([k, v]) => `<span class="ac-gain">+${v} ${k}</span>`)
+      .join('');
+
+    const psiTags = a.psi
+      .map(p => `<span class="ac-gain psi">${p}</span>`)
+      .join('');
+
+    const noGains = !statTags && !psiTags
+      ? `<span class="ac-gain none">No direct gains</span>`
+      : '';
+
+    return `<div class="assign-card${sel ? ' selected' : ''}"
+      onclick="selectAssignment(${yearIdx},'${a.id}')"
+      onmouseenter="hoverAssign(${yearIdx},'${a.id}')"
+      onmouseleave="unhover()">
+      <div class="ac-name">${a.name}</div>
+      <div class="ac-gains">${statTags}${psiTags}${noGains}</div>
+    </div>`;
+  }).join('');
+}
+
+function showBranchDesc(id) {
+  const b = BRANCHES[id];
+  document.getElementById('descEmpty').style.display = 'none';
+  const c = document.getElementById('descContent');
+  c.style.display = 'flex';
+
+  const tag = document.getElementById('descTag');
+  tag.textContent = b.name.toUpperCase();
+
+  document.getElementById('descBriefing').textContent = b.description;
+  document.getElementById('descResult').textContent   = b.result;
+
+  const baseStatHtml = Object.entries(b.baseStats)
+    .map(([k, v]) => `<div class="desc-gain-item">+${v} ${k}</div>`)
+    .join('');
+  const basePsiHtml = b.basePsi
+    .map(p => `<div class="desc-gain-item psi">+ ${p}</div>`)
+    .join('');
+
+  document.getElementById('descGains').innerHTML =
+    baseStatHtml + basePsiHtml ||
+    `<div style="color:#2a3e2a;font-size:0.73rem;">Select an assignment for gains</div>`;
+
+  document.getElementById('descEquipSection').style.display = 'none';
+}
+
+function showAssignmentDesc(a) {
+  if (!selectedBranch) return;
+  const b = BRANCHES[selectedBranch];
+
+  const c = document.getElementById('descContent');
+  c.style.display = 'flex';
+
+  const tag = document.getElementById('descTag');
+  tag.textContent = b.name.toUpperCase();
+
+  document.getElementById('descBriefing').textContent = a.description;
+  document.getElementById('descResult').textContent   = a.result;
+
+  const statHtml = Object.entries(a.stats)
+    .map(([k, v]) => `<div class="desc-gain-item">+${v} ${k}</div>`)
+    .join('');
+  const psiHtml = a.psi
+    .map(p => `<div class="desc-gain-item psi">+ ${p}</div>`)
+    .join('');
+
+  document.getElementById('descGains').innerHTML =
+    statHtml + psiHtml ||
+    `<div style="color:#2a3e2a;font-size:0.73rem;">No direct stat gains</div>`;
+
+  const equipSec = document.getElementById('descEquipSection');
+  if (a.equipment && a.equipment.length > 0) {
+    equipSec.style.display = 'block';
+    document.getElementById('descEquipList').innerHTML =
+      a.equipment.map(e => `<div>• ${e}</div>`).join('');
+  } else {
+    equipSec.style.display = 'none';
+  }
+}
+
+function calcStats() {
+  const totals = {};
+  const allPsi = [];
+
+  if (!selectedBranch) return { totals, allPsi };
+
+  const b = BRANCHES[selectedBranch];
+  Object.entries(b.baseStats).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; });
+  allPsi.push(...b.basePsi);
+
+  for (let i = 0; i < 3; i++) {
+    if (!selectedYear[i]) continue;
+    const a = getAssign(i, selectedYear[i]);
+    if (!a) continue;
+    Object.entries(a.stats).forEach(([k, v]) => { totals[k] = (totals[k] || 0) + v; });
+    allPsi.push(...a.psi);
+  }
+
+  return { totals, allPsi };
+}
+
+function updateStats() {
+  const { totals, allPsi } = calcStats();
+  const maxVal = Math.max(3, ...Object.values(totals));
+
+  let lastGroup = '';
+  const html = STAT_DEFS.map(def => {
+    const val  = totals[def.key] || 0;
+    const pct  = (val / maxVal) * 100;
+    let groupHtml = '';
+    if (def.group !== lastGroup) {
+      groupHtml  = `<div class="stat-group-label">${def.group}</div>`;
+      lastGroup  = def.group;
+    }
+    return `${groupHtml}<div class="stat-row">
+      <div class="sn">${def.label}</div>
+      <div class="sb"><div class="sb-fill" style="width:${pct}%"></div></div>
+      <div class="sv${val === 0 ? ' z' : ''}">${val || '—'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('statsBars').innerHTML = html;
+
+  const psiSec  = document.getElementById('psiSection');
+  const psiList = document.getElementById('psiList');
+  if (allPsi.length > 0) {
+    psiSec.style.display = 'block';
+    psiList.innerHTML = allPsi.map(p => `<div class="psi-skill-item">${p}</div>`).join('');
+  } else {
+    psiSec.style.display = 'none';
+  }
+
+  const numericTotal = Object.values(totals).reduce((s, v) => s + v, 0);
+  document.getElementById('totalPoints').textContent = numericTotal;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  updateStats();
+});

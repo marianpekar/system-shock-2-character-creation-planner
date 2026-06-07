@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Shock 2 :: Character Creation Planner</title>
+<link rel="stylesheet" href="style.css">
+<script type="text/javascript" src="data.js"></script>
+<script type="text/javascript" src="planner.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>System Shock 2</h1>
+  <span>Character Creation Planner</span>
+</header>
+
+<div class="main">
+  <div class="desc-panel" id="descPanel">
+    <div class="desc-panel-title">Assignment Brief</div>
+    <div class="desc-empty" id="descEmpty">Select a branch of service<br>to begin character creation.</div>
+    <div id="descContent" style="display:none; flex-direction:column; gap:10px;">
+      <div id="descTag" class="desc-tag"></div>
+      <p id="descBriefing" class="desc-briefing"></p>
+      <hr class="desc-divider">
+      <p id="descResult" class="desc-result"></p>
+      <hr class="desc-divider">
+      <div class="desc-gains-label">Gains</div>
+      <div id="descGains"></div>
+      <div id="descEquipSection" style="display:none;">
+        <div class="desc-equipment">
+          <div class="desc-equipment-label">Starting Equipment</div>
+          <div id="descEquipList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="selections">
+    <div>
+      <div class="section-header">Branch of Service</div>
+      <div class="branch-row">
+        <div class="branch-card marines" data-branch="marines"
+          onclick="selectBranch('marines')" onmouseenter="hoverBranch('marines')" onmouseleave="unhover()">
+          <div class="bc-name">Marines</div>
+          <div class="ac-gains">
+            <div class="ac-gain">+1 Standard Weapons</div>
+          </div>
+        </div>
+        <div class="branch-card navy" data-branch="navy"
+          onclick="selectBranch('navy')" onmouseenter="hoverBranch('navy')" onmouseleave="unhover()">
+          <div class="bc-name">Navy</div>
+          <div class="ac-gains">
+            <div class="ac-gain">+1 Standard Weapons</div>
+          </div>
+        </div>
+        <div class="branch-card osa" data-branch="osa"
+          onclick="selectBranch('osa')" onmouseenter="hoverBranch('osa')" onmouseleave="unhover()">
+          <div class="bc-name">OSA</div>
+          <div class="ac-gains">
+            <div class="ac-gain psi">Level 1 Psi Disciplines</div>
+            <div class="ac-gain psi">+ Psi Amp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="year-section" id="year1Section">
+      <div class="section-header">Year 1 — First Assignment</div>
+      <div class="assignment-row" id="year1Row"></div>
+    </div>
+
+    <div class="year-section" id="year2Section">
+      <div class="section-header">Year 2 — Second Assignment</div>
+      <div class="assignment-row" id="year2Row"></div>
+    </div>
+
+    <div class="year-section" id="year3Section">
+      <div class="section-header">Year 3 — Final Assignment</div>
+      <div class="assignment-row" id="year3Row"></div>
+    </div>
+  </div>
+
+  <div class="stats-panel">
+    <div class="stats-title">Character Stats</div>
+    <div id="statsBars"></div>
+    <div id="psiSection" class="psi-skills-section" style="display:none;">
+      <div class="psi-section-label">Psi Disciplines</div>
+      <div id="psiList"></div>
+    </div>
+    <div class="stat-total-box">
+      <div class="stat-total-inner">
+        <div class="stat-total-label">Total Stat Points</div>
+        <div class="stat-total-val" id="totalPoints">0</div>
+        <div class="stat-total-sub">gained from training</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
