@@ -7,6 +7,8 @@ function selectBranch(id) {
 
   document.body.dataset.theme = id;
 
+  document.getElementById('exportBtn').disabled = true;
+
   const h1 = document.querySelector('header h1');
   h1.classList.remove('flicker');
   void h1.offsetWidth;
@@ -37,6 +39,7 @@ function selectAssignment(yearIdx, assignId) {
   const assign = getAssign(yearIdx, assignId);
   if (assign) showAssignmentDesc(assign);
   updateStats();
+  document.getElementById('exportBtn').disabled = selectedYear.some(y => y === null);
 }
 
 function hoverAssign(yearIdx, assignId) {
@@ -214,6 +217,23 @@ function updateStats() {
 
   const numericTotal = Object.values(totals).reduce((s, v) => s + v, 0);
   document.getElementById('totalPoints').textContent = numericTotal;
+}
+
+function exportBuild() {
+  if (!selectedBranch) return;
+
+  const data = {
+    branch: selectedBranch,
+    years:  selectedYear.slice()
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `ss2-${selectedBranch}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 document.addEventListener('DOMContentLoaded', function () {

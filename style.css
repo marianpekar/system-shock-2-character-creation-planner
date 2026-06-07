@@ -460,6 +460,35 @@ header span {
 }
 .stat-total-sub { font-size: 0.58rem; color: var(--section-color); }
 
+.export-row {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+.export-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  padding: 9px 28px;
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  margin-bottom: 1em;
+}
+.export-btn:hover:not(:disabled) {
+  background: var(--card-hover);
+  border-color: var(--accent);
+}
+.export-btn:disabled {
+  color: var(--section-color);
+  border-color: var(--border-dim);
+  cursor: default;
+}
+
 @media (max-width: 891px) {
   .main {
     flex-direction: column;
