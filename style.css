@@ -459,3 +459,30 @@ header span {
   line-height: 1.2;
 }
 .stat-total-sub { font-size: 0.58rem; color: var(--section-color); }
+
+@media (max-width: 891px) {
+  .main {
+    flex-direction: column;
+    overflow: visible;
+    height: auto;
+    min-height: 0;
+  }
+
+  .selections  { order: 1; overflow: visible; padding: 14px; }
+  .stats-panel { order: 2; width: 100%; min-width: 0; overflow: visible; border-left: none; border-top: 1px solid var(--border); }
+  .desc-panel  { order: 3; width: 100%; min-width: 0; overflow: visible; border-right: none; border-top: 1px solid var(--border); }
+
+  .sn { width: 84px; }
+
+  .stat-total-box { margin-top: 16px; }
+
+  .assignment-row { flex-direction: column; }
+}
+
+@media (max-width: 520px) {
+  .bc-name { font-size: 1rem; }
+  .selections { padding: 12px 10px; gap: 16px; }
+  .stats-panel, .desc-panel { padding: 14px 12px; }
+
+  .sn { width: 72px; font-size: 0.55rem; }
+}
