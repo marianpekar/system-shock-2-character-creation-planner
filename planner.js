@@ -219,6 +219,31 @@ function updateStats() {
   document.getElementById('totalPoints').textContent = numericTotal;
 }
 
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.branch || !BRANCHES[data.branch]) return;
+
+      selectBranch(data.branch);
+
+      if (Array.isArray(data.years)) {
+        data.years.forEach((assignId, i) => {
+          if (assignId && getAssign(i, assignId)) {
+            selectAssignment(i, assignId);
+          }
+        });
+      }
+    } catch (_) {}
+  };
+  reader.readAsText(file);
+}
+
 function exportBuild() {
   if (!selectedBranch) return;
 
